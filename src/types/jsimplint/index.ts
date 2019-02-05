@@ -105,8 +105,8 @@ export enum TokenType {
   PUNCTUATOR_RIGHT_PAREN,
 };
 
-export class Token {
-  type: TokenType = TokenType.KEYWORD_NULL;
+export interface Token {
+  type: TokenType;
   value: any;
   line?: number;
 };

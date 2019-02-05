@@ -79,13 +79,35 @@ const matchers = [
   },
 ];
 
-const tokenize = (
-  source: string,
-  excludeTokens: Set<TokenType> = new Set<TokenType>([TokenType.SPACE]),
-): Token[] => {
+class PunctuatorComposer {
+  private buffer: string = '';
+
+  consume(token: Token): boolean {
+    if (punctuators[token.value]) {
+      const extended = this.buffer + token.value;
+      if (punctuators[extended]) {
+        this.buffer = extended;
+        return true;
+      }
+    }
+    return false;
+  }
+
+  get(): Token | undefined {
+    if (this.buffer) {
+      const mBuffer = this.buffer;
+      this.buffer = '';
+      return { type: punctuators[mBuffer], value: mBuffer };
+    }
+  }
+};
+
+const tokenize = (source: string, excludeTokens = new Set<TokenType>([TokenType.SPACE])): Token[] => {
   const tokens: Token[] = [];
-  // remove comments and split by line breaks
+  const composer: PunctuatorComposer = new PunctuatorComposer();
   const lines = source.replace(regex.comment, '').split(regex.crlf);
+  const pushToken = (token?: Token) => token && !excludeTokens.has(token.type) && tokens.push(token);
+
   lines
     .filter(Boolean) // discard empty lines
     .map((s: string) => s.trim())
@@ -93,21 +115,27 @@ const tokenize = (
       line
         .split(regex.word)
         .filter(Boolean)
-        .forEach(word => {
+        .forEach((word) => {
           const m = matchers.find(matcher => matcher.match(word));
           if (m) {
             const token = m.token(word);
-            if (!excludeTokens.has(token.type)) {
-              tokens.push(m.token(word));
+            if (!composer.consume(token)) {
+              pushToken(composer.get());
+              pushToken(m.token(word));
             }
           }
         });
     });
 
+  // clear composer buffer
+  pushToken(composer.get());
+
   // include comments
-  (source.match(regex.comment) || []).forEach(match => {
-    tokens.push({ type: TokenType.COMMENT, value: match });
-  });
+  (source.match(regex.comment) || [])
+    .forEach(match => tokens.push({
+      type: TokenType.COMMENT,
+      value: match
+    }));
   return tokens;
 };
 

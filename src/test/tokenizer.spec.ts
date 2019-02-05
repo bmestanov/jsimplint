@@ -167,7 +167,7 @@ describe('Tokenizer tests', () => {
     const expected: Token[] = [
       { type: TokenType.COMMENT, value: '// this is a comment' },
     ];
-    expect(tokens).to.include.deep.ordered.members(expected);
+    expect(tokens).to.have.deep.ordered.members(expected);
   });
 
   it('should tokenize inline single line comment', () => {
@@ -192,6 +192,62 @@ describe('Tokenizer tests', () => {
     const expected: Token[] = [
       { type: TokenType.COMMENT, value: source },
     ];
-    expect(tokens).to.include.deep.ordered.members(expected);
+    expect(tokens).to.have.deep.ordered.members(expected);
+  });
+
+  it('should tokenize if statement', () => {
+    const tokens = tokenize(`
+    if (p === 42) {
+      return null;
+    }
+    `);
+    const expected: Token[] = [
+      { type: TokenType.KEYWORD_IF, value: 'if' },
+      { type: TokenType.PUNCTUATOR_LEFT_PAREN, value: '(' },
+      { type: TokenType.IDENTIFIER, value: 'p' },
+      { type: TokenType.PUNCTUATOR_STRICT_EQ, value: '===' },
+      { type: TokenType.NUMERIC, value: 42 },
+      { type: TokenType.PUNCTUATOR_RIGHT_PAREN, value: ')' },
+      { type: TokenType.PUNCTUATOR_LEFT_CURLY, value: '{' },
+      { type: TokenType.KEYWORD_RETURN, value: 'return' },
+      { type: TokenType.KEYWORD_NULL, value: null },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_RIGHT_CURLY, value: '}' },
+    ];
+    expect(tokens).to.have.deep.ordered.members(expected);
+  });
+
+  it('should tokenize for statement', () => {
+    const tokens = tokenize(`
+    for( let i = 0; i < 10; i++) {
+      console.log("a");
+    }
+    `);
+    const expected: Token[] = [
+      { type: TokenType.KEYWORD_FOR, value: 'for' },
+      { type: TokenType.PUNCTUATOR_LEFT_PAREN, value: '(' },
+      { type: TokenType.KEYWORD_LET, value: 'let' },
+      { type: TokenType.IDENTIFIER, value: 'i' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
+      { type: TokenType.NUMERIC, value: 0 },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+      { type: TokenType.IDENTIFIER, value: 'i' },
+      { type: TokenType.PUNCTUATOR_LT, value: '<' },
+      { type: TokenType.NUMERIC, value: 10 },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+      { type: TokenType.IDENTIFIER, value: 'i' },
+      { type: TokenType.PUNCTUATOR_INCREMENT, value: '++' },
+      { type: TokenType.PUNCTUATOR_RIGHT_PAREN, value: ')' },
+      { type: TokenType.PUNCTUATOR_LEFT_CURLY, value: '{' },
+      { type: TokenType.IDENTIFIER, value: 'console' },
+      { type: TokenType.PUNCTUATOR_DOT, value: '.' },
+      { type: TokenType.IDENTIFIER, value: 'log' },
+      { type: TokenType.PUNCTUATOR_LEFT_PAREN, value: '(' },
+      { type: TokenType.STRING, value: 'a' },
+      { type: TokenType.PUNCTUATOR_RIGHT_PAREN, value: ')' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_RIGHT_CURLY, value: '}' },
+    ];
+    expect(tokens).to.have.deep.ordered.members(expected);
   });
 });
