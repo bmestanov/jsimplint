@@ -1,0 +1,7 @@
+{
+  "name": "@types/jsimplint",
+  "version": "1.0.0",
+  "description": "Simple JS linter",
+  "main": "",
+  "types": "index.d.ts"
+}
