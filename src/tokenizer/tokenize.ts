@@ -1,6 +1,6 @@
 import { Token, TokenType } from '../types/jsimplint';
 import { keywords } from './keywords';
-import { operators } from './operators';
+import { punctuators } from './punctuators';
 
 const regex = {
   space: / +/,
@@ -24,14 +24,14 @@ const regex = {
 
 const matchers = [
   {
-    match: (s: string): boolean => keywords.has(s),
+    match: (s: string): boolean => !!keywords[s],
     token: (s: string): Token => {
       switch (s) {
-        case 'null': return { type: TokenType.NULL, value: null };
-        case 'undefined': return { type: TokenType.UNDEFINED, value: undefined };
+        case 'null': return { type: TokenType.KEYWORD_NULL, value: null };
+        case 'undefined': return { type: TokenType.KEYWORD_UNDEFINED, value: undefined };
         case 'true': return { type: TokenType.BOOLEAN, value: true };
         case 'false': return { type: TokenType.BOOLEAN, value: false };
-        default: return { type: TokenType.KEYWORD, value: s };
+        default: return { type: keywords[s], value: s };
       };
     },
   },
@@ -57,9 +57,9 @@ const matchers = [
     }),
   },
   {
-    match: (s: string): boolean => !!operators[s],
+    match: (s: string): boolean => !!punctuators[s],
     token: (s: string): Token => ({
-      type: operators[s],
+      type: punctuators[s],
       value: s,
     }),
   },
@@ -79,7 +79,10 @@ const matchers = [
   },
 ];
 
-const tokenize = (source: string, includeSpaces: boolean = false): Token[] => {
+const tokenize = (
+  source: string,
+  excludeTokens: Set<TokenType> = new Set<TokenType>([TokenType.SPACE]),
+): Token[] => {
   const tokens: Token[] = [];
   // remove comments and split by line breaks
   const lines = source.replace(regex.comment, '').split(regex.crlf);
@@ -94,7 +97,7 @@ const tokenize = (source: string, includeSpaces: boolean = false): Token[] => {
           const m = matchers.find(matcher => matcher.match(word));
           if (m) {
             const token = m.token(word);
-            if (token.type !== TokenType.SPACE || includeSpaces) {
+            if (!excludeTokens.has(token.type)) {
               tokens.push(m.token(word));
             }
           }

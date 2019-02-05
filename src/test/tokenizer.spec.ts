@@ -9,11 +9,11 @@ describe('Tokenizer tests', () => {
     const   foo =42;
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
       { type: TokenType.NUMERIC, value: 42 },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -23,11 +23,11 @@ describe('Tokenizer tests', () => {
     const foo = 42;
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
       { type: TokenType.NUMERIC, value: 42 },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -37,11 +37,11 @@ describe('Tokenizer tests', () => {
     const foo = "bar";
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
       { type: TokenType.STRING, value: 'bar' },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -51,11 +51,11 @@ describe('Tokenizer tests', () => {
     const foo = 'bar';
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
       { type: TokenType.STRING, value: 'bar' },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -65,11 +65,11 @@ describe('Tokenizer tests', () => {
     const foo = null;
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.NULL, value: null },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
+      { type: TokenType.KEYWORD_NULL, value: null },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -79,11 +79,11 @@ describe('Tokenizer tests', () => {
     const foo = undefined;
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.UNDEFINED, value: undefined },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
+      { type: TokenType.KEYWORD_UNDEFINED, value: undefined },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -94,16 +94,16 @@ describe('Tokenizer tests', () => {
     const bar = false;
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
       { type: TokenType.BOOLEAN, value: true },
-      { type: TokenType.SEMICOLON, value: ';' },
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'bar' },
-      { type: TokenType.ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
       { type: TokenType.BOOLEAN, value: false },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -113,15 +113,15 @@ describe('Tokenizer tests', () => {
     const foo = [1, 2];
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.LEFT_BRACKET, value: '[' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_LEFT_BRACKET, value: '[' },
       { type: TokenType.NUMERIC, value: 1 },
-      { type: TokenType.COMMA, value: ',' },
+      { type: TokenType.PUNCTUATOR_COMMA, value: ',' },
       { type: TokenType.NUMERIC, value: 2 },
-      { type: TokenType.RIGHT_BRACKET, value: ']' },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_RIGHT_BRACKET, value: ']' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -131,15 +131,15 @@ describe('Tokenizer tests', () => {
     const foo = {bar: 1};
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'const' },
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.LEFT_CURLY, value: '{' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
+      { type: TokenType.PUNCTUATOR_LEFT_CURLY, value: '{' },
       { type: TokenType.IDENTIFIER, value: 'bar' },
-      { type: TokenType.COLON, value: ':' },
+      { type: TokenType.PUNCTUATOR_COLON, value: ':' },
       { type: TokenType.NUMERIC, value: 1 },
-      { type: TokenType.RIGHT_CURLY, value: '}' },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_RIGHT_CURLY, value: '}' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -149,13 +149,13 @@ describe('Tokenizer tests', () => {
     function foo() {};
     `);
     const expected: Token[] = [
-      { type: TokenType.KEYWORD, value: 'function' },
+      { type: TokenType.KEYWORD_FUNCTION, value: 'function' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.LEFT_PAREN, value: '(' },
-      { type: TokenType.RIGHT_PAREN, value: ')' },
-      { type: TokenType.LEFT_CURLY, value: '{' },
-      { type: TokenType.RIGHT_CURLY, value: '}' },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_LEFT_PAREN, value: '(' },
+      { type: TokenType.PUNCTUATOR_RIGHT_PAREN, value: ')' },
+      { type: TokenType.PUNCTUATOR_LEFT_CURLY, value: '{' },
+      { type: TokenType.PUNCTUATOR_RIGHT_CURLY, value: '}' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
   });
@@ -176,9 +176,9 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.LEFT_PAREN, value: '(' },
-      { type: TokenType.RIGHT_PAREN, value: ')' },
-      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.PUNCTUATOR_LEFT_PAREN, value: '(' },
+      { type: TokenType.PUNCTUATOR_RIGHT_PAREN, value: ')' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
       { type: TokenType.COMMENT, value: '// this is a comment' },
     ];
     expect(tokens).to.have.deep.members(expected);
