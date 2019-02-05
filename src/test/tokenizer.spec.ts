@@ -5,17 +5,12 @@ import 'mocha';
 
 describe('Tokenizer tests', () => {
   it('should tokenize with bad formatting', () => {
-    // console
     const tokens = tokenize(`
     const   foo =42;
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
-      { type: TokenType.SPACE, value: ' ' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
       { type: TokenType.NUMERIC, value: 42 },
       { type: TokenType.SEMICOLON, value: ';' },
@@ -23,18 +18,14 @@ describe('Tokenizer tests', () => {
     expect(tokens).to.have.deep.members(expected);
   });
 
-
   it('should tokenize number declaration', () => {
     const tokens = tokenize(`
     const foo = 42;
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.NUMERIC, value: 42 },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
@@ -47,11 +38,8 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.STRING, value: 'bar' },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
@@ -64,11 +52,8 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.STRING, value: 'bar' },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
@@ -81,11 +66,8 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.NULL, value: null },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
@@ -98,11 +80,8 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.UNDEFINED, value: undefined },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
@@ -116,19 +95,13 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.BOOLEAN, value: true },
       { type: TokenType.SEMICOLON, value: ';' },
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'bar' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.BOOLEAN, value: false },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
@@ -141,15 +114,11 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.LEFT_BRACKET, value: '[' },
       { type: TokenType.NUMERIC, value: 1 },
       { type: TokenType.COMMA, value: ',' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.NUMERIC, value: 2 },
       { type: TokenType.RIGHT_BRACKET, value: ']' },
       { type: TokenType.SEMICOLON, value: ';' },
@@ -163,15 +132,11 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'const' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.ASSIGN, value: '=' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.LEFT_CURLY, value: '{' },
       { type: TokenType.IDENTIFIER, value: 'bar' },
       { type: TokenType.COLON, value: ':' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.NUMERIC, value: 1 },
       { type: TokenType.RIGHT_CURLY, value: '}' },
       { type: TokenType.SEMICOLON, value: ';' },
@@ -185,15 +150,48 @@ describe('Tokenizer tests', () => {
     `);
     const expected: Token[] = [
       { type: TokenType.KEYWORD, value: 'function' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.IDENTIFIER, value: 'foo' },
       { type: TokenType.LEFT_PAREN, value: '(' },
       { type: TokenType.RIGHT_PAREN, value: ')' },
-      { type: TokenType.SPACE, value: ' ' },
       { type: TokenType.LEFT_CURLY, value: '{' },
       { type: TokenType.RIGHT_CURLY, value: '}' },
       { type: TokenType.SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);
+  });
+
+  it('should tokenize single line comment', () => {
+    const tokens = tokenize(`
+    // this is a comment
+    `);
+    const expected: Token[] = [
+      { type: TokenType.COMMENT, value: '// this is a comment' },
+    ];
+    expect(tokens).to.include.deep.ordered.members(expected);
+  });
+
+  it('should tokenize inline single line comment', () => {
+    const tokens = tokenize(`
+    foo(); // this is a comment
+    `);
+    const expected: Token[] = [
+      { type: TokenType.IDENTIFIER, value: 'foo' },
+      { type: TokenType.LEFT_PAREN, value: '(' },
+      { type: TokenType.RIGHT_PAREN, value: ')' },
+      { type: TokenType.SEMICOLON, value: ';' },
+      { type: TokenType.COMMENT, value: '// this is a comment' },
+    ];
+    expect(tokens).to.have.deep.members(expected);
+  });
+
+  it('should tokenize multiline comment', () => {
+    const source = `/*
+    this is a multiline comment
+    */`;
+    const tokens = tokenize(source);
+    const expected: Token[] = [
+      { type: TokenType.COMMENT, value: source },
+    ];
+    expect(tokens).to.include.deep.ordered.members(expected);
   });
 });

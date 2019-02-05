@@ -15,6 +15,10 @@ const regex = {
     /'([^\']|(\\\'))*'/,      // single quote
     /"([^\"]|(\\\"))*"/,      // double quote
   ],
+  comment: (
+    // single line | multiline
+    /(\/\/.*)|(\/\*[^\*\/]*\*\/)/g
+  ),
   crlf: /\n|\r\n?/,
 };
 
@@ -75,9 +79,10 @@ const matchers = [
   },
 ];
 
-const tokenize = (source: string): Token[] => {
-  const lines = source.split(regex.crlf);
+const tokenize = (source: string, includeSpaces: boolean = false): Token[] => {
   const tokens: Token[] = [];
+  // remove comments and split by line breaks
+  const lines = source.replace(regex.comment, '').split(regex.crlf);
   lines
     .filter(Boolean) // discard empty lines
     .map((s: string) => s.trim())
@@ -88,10 +93,18 @@ const tokenize = (source: string): Token[] => {
         .forEach(word => {
           const m = matchers.find(matcher => matcher.match(word));
           if (m) {
-            tokens.push(m.token(word));
+            const token = m.token(word);
+            if (token.type !== TokenType.SPACE || includeSpaces) {
+              tokens.push(m.token(word));
+            }
           }
         });
     });
+
+  // include comments
+  (source.match(regex.comment) || []).forEach(match => {
+    tokens.push({ type: TokenType.COMMENT, value: match });
+  });
   return tokens;
 };
 
