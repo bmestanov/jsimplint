@@ -10,7 +10,7 @@
       "name": "Current file",
       "program": "${workspaceFolder}/node_modules/.bin/ts-node",
       "args": [
-          "${workspaceFolder}/src/parser/jsimplint.ts",
+          "${workspaceFolder}/src/jsimplint.ts",
       ],
       "protocol": "inspector"
     },

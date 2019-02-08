@@ -1,5 +1,4 @@
 const parser = require('./parser');
-const expressions = require('./expressions');
 
 const analyze = (source: any) => {
   const visitor = {
