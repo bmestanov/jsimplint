@@ -8,8 +8,9 @@
       "type": "node",
       "request": "launch",
       "name": "Current file",
+      "program": "${workspaceFolder}/node_modules/.bin/ts-node",
       "args": [
-          "${workspaceFolder}/src/parser/jison-import.js",
+          "${workspaceFolder}/src/parser/jsimplint.ts",
       ],
       "protocol": "inspector"
     },

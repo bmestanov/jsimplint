@@ -27,10 +27,10 @@ DoubleStringCharacter ([^\"\\\n\r]+)|(\\{EscapeSequence})|{LineContinuation}
 SingleStringCharacter ([^\'\\\n\r]+)|(\\{EscapeSequence})|{LineContinuation}
 StringLiteral (\"{DoubleStringCharacter}*\")|(\'{SingleStringCharacter}*\")
 
-%x REGEXP
 %options flex
 
 %%
+\s+ ;
 ">>>=" return ">>>=";
 ">>=" return ">>=";
 "<<=" return "<<=";
@@ -160,70 +160,101 @@ StringLiteral (\"{DoubleStringCharacter}*\")|(\'{SingleStringCharacter}*\")
 
 %%
 Program
-  : Element Program
-    { return 'program'; }
-  | EOF
-    { return []; }
+  : Elements EOF
+    { $$ = new yy.ProgramNode($1, @1); return $$; }
+  ;
+Elements
+  :
+    { $$ = []; }
+  | Elements Element
+    { $$ =  $1.concat($2); }
   ;
 Element
   : KEYWORD_FUNCTION IDENTIFIER "(" ParameterListOpt ")" CompoundStatement
+    { $$ = new yy.FunctionDeclarationNode($2, $4, $6, @1); }
   | Statement
   ;
 ParameterListOpt
   : 
+    { $$ = new yy.FormalParameterListNode([], @1); }
   | ParameterList
+    { $$ = new yy.FormalParameterListNode($1, @1); }
   ;
 ParameterList
   : IDENTIFIER
-  | IDENTIFIER "," ParameterList
+    { $$ = [new yy.FormalParameterNode($1, @1)]; }
+  | ParameterList "," ParameterList
+    { $$ = $1.concat($3); }
   ;
 CompoundStatement
   : "{" Statements "}"
+    { $$ = new yy.CompoundStatementNode($2, @1); }
   ;
 Statements
   : 
-  | Statement Statements
+    { $$ = []; }
+  | Statements Statement
+    { $$ =  $1.concat($2); }
   ;
 Statement
   :
   | ";"
+    { $$ = new yy.EmptyStatementNode(@1); }
   | KEYWORD_IF Condition Statement
+    { $$ = new yy.IfStatementNode($2, $3, null, @1); }
   | KEYWORD_IF Condition Statement KEYWORD_ELSE Statement
+    { $$ = new yy.IfStatementNode($2, $3, null, @1); }
   | KEYWORD_WHILE Condition Statement
+    { $$ = new yy.WhileStatementNode($2, $3, @1); }
   | ForParen ";" ExpressionOpt ";" ExpressionOpt ")" Statement
+    { $$ = new yy.ForStatementNode(null, $3, $5, $7, @1); }
   | ForBegin ";" ExpressionOpt ";" ExpressionOpt ")" Statement
+    { $$ = new yy.ForStatementNode($1, $3, $5, $7, @1); }
   | ForBegin KEYWORD_IN Expression ")" Statement
+    { $$ = new yy.ForStatementNode($1, $3, $5, @1); }
   | KEYWORD_BREAK ";"
+    { $$ = new yy.BreakStatementNode(@1); }
   | KEYWORD_CONTINUE ";"
+    { $$ = new yy.ContinueStatementNode(@1); }
   | KEYWORD_WITH "(" Expression ")" Statement
+    { $$ = new yy.WithStatementNode($3, $5, @1); }  
   | KEYWORD_RETURN ExpressionOpt ";"
+    { $$ = new yy.ReturnStatementNode($2, @1); }  
   | CompoundStatement
   | VariablesOrExpression
   | VariablesOrExpression ";"
   ;
 Condition
   : "(" Expression ")"
+    { $$ = $2; }
   ;
 ForParen
   : KEYWORD_FOR "("
   ;
 ForBegin
   : ForParen VariablesOrExpression
+    { $$ = $2; }
   ;
 VariablesOrExpression
   : KEYWORD_VAR Variables
+    { $$ = new yy.VariableDefinitionListNode($2, @1); }
   | Expression
   ;
 Variables
   : Variable
-  | Variable "," Variables
+    { $$ = [$1]; }
+  | Variables "," Variable
+    { $$ = $1.concat($3); }
   ;
 Variable
   : IDENTIFIER
+    { $$ = new yy.VariableDefinitionNode($1, undefined, @1); }
   | IDENTIFIER "=" AssignmentExpression
+    { $$ = new yy.VariableDefinitionNode($1, $3, @1); }
   ;
 ExpressionOpt
   : 
+  { $$ = new yy.EmptyExpression(@1); }
   | Expression
   ;
 Expression
@@ -233,6 +264,7 @@ Expression
 AssignmentExpression
   : ConditionalExpression
   | ConditionalExpression AssignmentOperator AssignmentExpression
+    { $$ = new yy.AssignmentExpressionNode($2, $1, $3, @1); }
   ;
 AssignmentOperator
   : "="
@@ -251,30 +283,37 @@ AssignmentOperator
 ConditionalExpression
   : OrExpression
   | OrExpression "?" AssignmentExpression ":" AssignmentExpression
+    { $$ = new yy.ConditionalExpression($1, $3, $5, @1); }
   ;
 OrExpression
   : AndExpression
   | AndExpression "||" OrExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 AndExpression
   : BitwiseOrExpression
   | BitwiseOrExpression "&&" AndExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 BitwiseOrExpression
   : BitwiseXorExpression
   | BitwiseXorExpression "|" BitwiseOrExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 BitwiseXorExpression
   : BitwiseAndExpression
   | BitwiseAndExpression "^" BitwiseXorExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 BitwiseAndExpression
   : EqualityExpression
   | EqualityExpression "&" BitwiseAndExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 EqualityExpression
   : RelationalExpression
   | RelationalExpression EqualityOperator EqualityExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 EqualityOperator
   : "=="
@@ -285,6 +324,7 @@ EqualityOperator
 RelationalExpression
   : ShiftExpression
   | RelationalExpression RelationalOperator ShiftExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 RelationalOperator
   : "<="
@@ -295,6 +335,7 @@ RelationalOperator
 ShiftExpression
   : AdditiveExpression
   | AdditiveExpression ShiftOperator ShiftExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 ShiftOperator
   : "<<"
@@ -304,6 +345,7 @@ ShiftOperator
 AdditiveExpression
   : MultiplicativeExpression
   | MultiplicativeExpression AdditiveOperator AdditiveExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 AdditiveOperator
   : "+"
@@ -312,6 +354,7 @@ AdditiveOperator
 MultiplicativeExpression
   : UnaryExpression
   | UnaryExpression MultiplicativeOperator MultiplicativeExpression
+    { $$ = new yy.BinaryExpressionNode($2, $1, $3, @1); }
   ;
 MultiplicativeOperator
   : "*"
@@ -320,57 +363,78 @@ MultiplicativeOperator
   ;
 UnaryExpression
   : MemberExpression
-  | UnaryOperator UnaryExpression
-  | "-" UnaryExpression
-  | "+" UnaryExpression
   | PrefixOperator MemberExpression
+    { $$ = new yy.UnaryExpressionNode($1, true, $2, @1); }
   | MemberExpression PostfixOperator
+    { $$ = new yy.UnaryExpressionNode($2, false, $1, @1); }
   | KEYWORD_NEW Constructor
-  | KEYWORD_DELETE MemberExpression
+    { $$ = new yy.NewExpressionNode($2, @1); }  
   ;
 PrefixOperator
   : "++"
   | "--"
+  | "-"
+  | "+"
+  | "!"
+  | "~"
+  | KEYWORD_TYPEOF
+  | KEYWORD_DELETE
   ;
 PostfixOperator
   : "++"
   | "--"
   ;
 Constructor
-  : KEYWORD_THIS "." CallExpression
-  | CallExpression
+  : KEYWORD_THIS "." ConstructorCall
+  | ConstructorCall
   ;
-CallExpression
+ConstructorCall
   : IDENTIFIER
   | IDENTIFIER "(" ArgumentListOpt ")"
-  | IDENTIFIER "." CallExpression
+  | IDENTIFIER "." ConstructorCall
   ;
 MemberExpression
   : PrimaryExpression
   | PrimaryExpression "." MemberExpression
+    { $$ = new yy.MemberExpressionNode($1, $3, false, @1); }
   | PrimaryExpression "[" Expression "]"
+    { $$ = new yy.MemberExpressionNode($1, $3, true, @1); }
   | PrimaryExpression "(" ArgumentListOpt ")"
+    { $$ = new yy.CallExpressionNode($1, $3, @1); }
   ;
 ArgumentListOpt
   : 
+    { $$ = new yy.FunctionArgumentListNode([], @1); }
   | ArgumentList
+    { $$ = new yy.FunctionArgumentListNode($1, @1); }
   ;
 ArgumentList
   : AssignmentExpression
-  | AssignmentExpression "," ArgumentList
+    { $$ = [$1]; }
+  | ArgumentList "," AssignmentExpression
+    { $$ = $1.concat($3); }
   ;
 PrimaryExpression
   : "(" Expression ")"
-  | IDENTIFIER
+    { $$ = new yy.ExpressionNode($2, @1); }
   | Literal
+    { $$ = new yy.ExpressionNode($1, @1); }
+  | IDENTIFIER
+    { $$ = new yy.IdentifierNode($1, @1); }
   | KEYWORD_THIS
+    { $$ = new yy.ThisExpressionNode($1, @1); }
   ;
 Literal
   : NullLiteral
+    { $$ = new yy.LiteralNode(null, @1); }
   | UndefinedLiteral
+    { $$ = new yy.LiteralNode(undefined, @1); }
   | BooleanLiteral
+    { $$ = new yy.LiteralNode(yytext === 'true', @1); }
   | NumericLiteral
+    { $$ = new yy.LiteralNode(Number(yytext), @1); }
   | StringLiteral
+    { $$ = new yy.LiteralNode(yytext, @1); }
   ;
 UndefinedLiteral
   : "KEYWORD_UNDEFINED"
