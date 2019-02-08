@@ -1,257 +1,306 @@
-interface Visitor {
-  visit(node: ASTNode): void;
+export type NodeType =
+  "Program"
+  | "EmptyStatement"
+  | "CompoundStatement"
+  | "ExpressionNode"
+  | "EmptyExpression"
+  | "IfStatement"
+  | "BreakStatement"
+  | "ContinueStatement"
+  | "WithStatement"
+  | "SwitchStatement"
+  | "ReturnStatement"
+  | "ThrowStatement"
+  | "TryStatement"
+  | "WhileStatement"
+  | "DoWhileStatement"
+  | "ForStatement"
+  | "ForInStatement"
+  | "DebuggerStatement"
+  | "FunctionDeclaration"
+  | "FormalParameter"
+  | "FormalParameterList"
+  | "FunctionArgumentList"
+  | "VariableDefinition"
+  | "VariableDefinitionList"
+  | "ThisExpression"
+  | "UnaryExpression"
+  | "BinaryExpression"
+  | "AssignmentExpression"
+  | "UpdateExpression"
+  | "ConditionalExpression"
+  | "NewExpression"
+  | "CallExpression"
+  | "MemberExpression"
+  | "SwitchCase"
+  | "CatchClause"
+  | "Identifier"
+  | "Literal"
+  ;
+
+export interface Visitor {
+  visit(node: ASTNode, context: NodeType[]): void;
 }
 
-interface ASTNode {
-  accept(visitor: Visitor): void;
+export interface Location {
+  first_line: number;
+  first_column: number;
+  last_line: number;
+  last_column: number;
 }
 
-class ProgramNode implements ASTNode {
-  type: string;
+export interface ASTNode {
+  type: NodeType;
+  loc: Location;
+  accept(visitor: Visitor, context: NodeType[]): void;
+}
+
+export class ProgramNode implements ASTNode {
+  type: NodeType;
   body: ASTNode[];
-  loc: any;
-  constructor(body: ASTNode[], loc: any) {
+  loc: Location;
+  constructor(body: ASTNode[], loc: Location) {
     this.type = "Program";
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.body.forEach(el => el.accept(visitor));
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.body.forEach(el => el.accept(visitor, [...context, this.type]));
   }
 }
 
-class EmptyStatementNode implements ASTNode {
-  type: string;
-  loc: any;
-  constructor(loc: any) {
+export class EmptyStatementNode implements ASTNode {
+  type: NodeType;
+  loc: Location;
+  constructor(loc: Location) {
     this.type = "EmptyStatement";
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class CompoundStatementNode implements ASTNode {
-  type: string;
+export class CompoundStatementNode implements ASTNode {
+  type: NodeType;
   body: ASTNode[];
-  loc: any;
-  constructor(body: ASTNode[], loc: any) {
+  loc: Location;
+  constructor(body: ASTNode[], loc: Location) {
     this.type = "CompoundStatement";
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.body.forEach(el => el.accept(visitor));
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.body.forEach(el => el.accept(visitor, [...context, this.type]));
   }
 }
 
-class ExpressionNode implements ASTNode {
-  type: string;
+export class ExpressionNode implements ASTNode {
+  type: NodeType;
   expression: ASTNode;
-  loc: any;
-  constructor(expression: ASTNode, loc: any) {
+  loc: Location;
+  constructor(expression: ASTNode, loc: Location) {
     this.type = "ExpressionNode";
     this.expression = expression;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.expression.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.expression.accept(visitor, [...context, this.type]);
   }
 }
 
-class EmptyExpression implements ASTNode {
-  type: string;
-  loc: any;
-  constructor(loc: any) {
+export class EmptyExpression implements ASTNode {
+  type: NodeType;
+  loc: Location;
+  constructor(loc: Location) {
     this.type = "EmptyExpression";
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class IfStatementNode implements ASTNode {
-  type: string;
+export class IfStatementNode implements ASTNode {
+  type: NodeType;
   test: ASTNode;
   consequent: ASTNode;
   alternate: ASTNode;
-  loc: any;
-  constructor(test: ASTNode, consequent: ASTNode, alternate: ASTNode, loc: any) {
+  loc: Location;
+  constructor(test: ASTNode, consequent: ASTNode, alternate: ASTNode, loc: Location) {
     this.type = "IfStatement";
     this.test = test;
     this.consequent = consequent;
     this.alternate = alternate;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class BreakStatementNode implements ASTNode {
-  type: string;
+export class BreakStatementNode implements ASTNode {
+  type: NodeType;
   label: any;
-  loc: any;
-  constructor(label: any, loc: any) {
+  loc: Location;
+  constructor(label: any, loc: Location) {
     this.type = "BreakStatement";
     this.label = label;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class ContinueStatementNode implements ASTNode {
-  type: string;
+export class ContinueStatementNode implements ASTNode {
+  type: NodeType;
   label: any;
-  loc: any;
-  constructor(label: any, loc: any) {
+  loc: Location;
+  constructor(label: any, loc: Location) {
     this.type = "ContinueStatement";
     this.label = label;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class WithStatementNode implements ASTNode {
-  type: string;
+export class WithStatementNode implements ASTNode {
+  type: NodeType;
   object: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(object: ASTNode, body: ASTNode, loc: any) {
+  loc: Location;
+  constructor(object: ASTNode, body: ASTNode, loc: Location) {
     this.type = "WithStatement";
     this.object = object;
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.object.accept(visitor);
-    this.body.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.object.accept(visitor, [...context, this.type]);
+    this.body.accept(visitor, [...context, this.type]);
   }
 }
 
-class SwitchStatementNode implements ASTNode {
-  type: string;
+export class SwitchStatementNode implements ASTNode {
+  type: NodeType;
   discriminant: ASTNode;
   cases: ASTNode;
-  loc: any;
-  constructor(discriminant: ASTNode, cases: ASTNode, loc: any) {
+  loc: Location;
+  constructor(discriminant: ASTNode, cases: ASTNode, loc: Location) {
     this.type = "SwitchStatement";
     this.discriminant = discriminant;
     this.cases = cases;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.discriminant.accept(visitor);
-    this.cases.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.discriminant.accept(visitor, [...context, this.type]);
+    this.cases.accept(visitor, [...context, this.type]);
   }
 }
 
-class ReturnStatementNode implements ASTNode {
-  type: string;
+export class ReturnStatementNode implements ASTNode {
+  type: NodeType;
   argument: ASTNode;
-  loc: any;
-  constructor(argument: ASTNode, loc: any) {
+  loc: Location;
+  constructor(argument: ASTNode, loc: Location) {
     this.type = "ReturnStatement";
     this.argument = argument;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.argument.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.argument.accept(visitor, [...context, this.type]);
   }
 }
 
-class ThrowStatementNode implements ASTNode {
-  type: string;
+export class ThrowStatementNode implements ASTNode {
+  type: NodeType;
   argument: ASTNode;
-  loc: any;
-  constructor(argument: ASTNode, loc: any) {
+  loc: Location;
+  constructor(argument: ASTNode, loc: Location) {
     this.type = "ThrowStatement";
     this.argument = argument;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.argument.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.argument.accept(visitor, [...context, this.type]);
   }
 }
 
-class TryStatementNode implements ASTNode {
-  type: string;
+export class TryStatementNode implements ASTNode {
+  type: NodeType;
   block: ASTNode;
   handlers: ASTNode;
   finalizer: ASTNode;
-  loc: any;
-  constructor(block: ASTNode, handlers: ASTNode, finalizer: ASTNode, loc: any) {
+  loc: Location;
+  constructor(block: ASTNode, handlers: ASTNode, finalizer: ASTNode, loc: Location) {
     this.type = "TryStatement";
     this.block = block;
     this.handlers = handlers;
     this.finalizer = finalizer;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.block.accept(visitor);
-    this.handlers.accept(visitor);
-    this.finalizer.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.block.accept(visitor, [...context, this.type]);
+    this.handlers.accept(visitor, [...context, this.type]);
+    this.finalizer.accept(visitor, [...context, this.type]);
   }
 }
 
-class WhileStatementNode implements ASTNode {
-  type: string;
+export class WhileStatementNode implements ASTNode {
+  type: NodeType;
   test: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(test: ASTNode, body: ASTNode, loc: any) {
+  loc: Location;
+  constructor(test: ASTNode, body: ASTNode, loc: Location) {
     this.type = "WhileStatement";
     this.test = test;
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.test.accept(visitor);
-    this.body.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.test.accept(visitor, [...context, this.type]);
+    this.body.accept(visitor, [...context, this.type]);
   }
 }
 
-class DoWhileStatementNode implements ASTNode {
-  type: string;
+export class DoWhileStatementNode implements ASTNode {
+  type: NodeType;
   test: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(body: ASTNode, test: ASTNode, loc: any) {
+  loc: Location;
+  constructor(body: ASTNode, test: ASTNode, loc: Location) {
     this.type = "DoWhileStatement";
     this.body = body;
     this.test = test;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.test.accept(visitor);
-    this.body.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.test.accept(visitor, [...context, this.type]);
+    this.body.accept(visitor, [...context, this.type]);
   }
 }
 
-class ForStatementNode implements ASTNode {
-  type: string;
+export class ForStatementNode implements ASTNode {
+  type: NodeType;
   init: ASTNode;
   test: ASTNode;
   update: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(init: ASTNode, test: ASTNode, update: ASTNode, body: ASTNode, loc: any) {
+  loc: Location;
+  constructor(init: ASTNode, test: ASTNode, update: ASTNode, body: ASTNode, loc: Location) {
     this.type = "ForStatement";
     this.init = init;
     this.test = test;
@@ -259,406 +308,367 @@ class ForStatementNode implements ASTNode {
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.init.accept(visitor);
-    this.test.accept(visitor);
-    this.update.accept(visitor);
-    this.body.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.init.accept(visitor, [...context, this.type]);
+    this.test.accept(visitor, [...context, this.type]);
+    this.update.accept(visitor, [...context, this.type]);
+    this.body.accept(visitor, [...context, this.type]);
   }
 }
 
-class ForInStatementNode implements ASTNode {
-  type: string;
+export class ForInStatementNode implements ASTNode {
+  type: NodeType;
   left: ASTNode;
   right: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(left: ASTNode, right: ASTNode, body: ASTNode, loc: any) {
+  loc: Location;
+  constructor(left: ASTNode, right: ASTNode, body: ASTNode, loc: Location) {
     this.type = "ForInStatement";
     this.left = left;
     this.right = right;
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.left.accept(visitor);
-    this.right.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.left.accept(visitor, [...context, this.type]);
+    this.right.accept(visitor, [...context, this.type]);
   }
 }
 
-class DebugggerStatementNode implements ASTNode {
-  type: string;
-  loc: any;
-  constructor(loc: any) {
+export class DebugggerStatementNode implements ASTNode {
+  type: NodeType;
+  loc: Location;
+  constructor(loc: Location) {
     this.type = "DebuggerStatement";
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class FunctionDeclarationNode implements ASTNode {
-  type: string;
+export class FunctionDeclarationNode implements ASTNode {
+  type: NodeType;
   name: string;
   params: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(name: string, params: ASTNode, body: ASTNode, loc: any) {
+  loc: Location;
+  constructor(name: string, params: ASTNode, body: ASTNode, loc: Location) {
     this.type = "FunctionDeclaration";
     this.name = name;
     this.params = params;
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.params.accept(visitor);
-    this.body.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.params.accept(visitor, [...context, this.type]);
+    this.body.accept(visitor, [...context, this.type]);
   }
 }
 
-class FormalParameterNode implements ASTNode {
-  type: string;
+export class FormalParameterNode implements ASTNode {
+  type: NodeType;
   variable: string;
-  loc: any;
-  constructor(variable: string, loc: any) {
+  loc: Location;
+  constructor(variable: string, loc: Location) {
     this.type = "FormalParameter";
     this.variable = variable;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class FormalParameterListNode implements ASTNode {
-  type: string;
+export class FormalParameterListNode implements ASTNode {
+  type: NodeType;
   parameters: ASTNode[];
-  loc: any;
-  constructor(parameters: ASTNode[], loc: any) {
+  loc: Location;
+  constructor(parameters: ASTNode[], loc: Location) {
     this.type = "FormalParameterList";
     this.parameters = parameters;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.parameters.forEach(param => param.accept(visitor));
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.parameters.forEach(param => param.accept(visitor, [...context, this.type]));
   }
 }
 
-class FunctionArgumentListNode implements ASTNode {
-  type: string;
+export class FunctionArgumentListNode implements ASTNode {
+  type: NodeType;
   args: ASTNode[];
-  loc: any;
-  constructor(args: ASTNode[], loc: any) {
+  loc: Location;
+  constructor(args: ASTNode[], loc: Location) {
     this.type = "FunctionArgumentList";
     this.args = args;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.args.forEach(arg => arg.accept(visitor));
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.args.forEach(arg => arg.accept(visitor, [...context, this.type]));
   }
 }
 
-class VariableDefinitionNode implements ASTNode {
-  type: string;
+export class VariableDefinitionNode implements ASTNode {
+  type: NodeType;
   name: string;
   init?: ASTNode;
-  loc: any;
-  constructor(name: string, init: ASTNode, loc: any) {
+  loc: Location;
+  constructor(name: string, init: ASTNode, loc: Location) {
     this.type = "VariableDefinition";
     this.name = name;
     this.init = init;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.init && this.init.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.init && this.init.accept(visitor, [...context, this.type]);
   }
 }
 
-class VariableDefinitionListNode implements ASTNode {
-  type: string;
+export class VariableDefinitionListNode implements ASTNode {
+  type: NodeType;
   definitions: ASTNode[];
-  loc: any;
-  constructor(definitions: ASTNode[], loc: any) {
+  loc: Location;
+  constructor(definitions: ASTNode[], loc: Location) {
     this.type = "VariableDefinitionList";
     this.definitions = definitions;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.definitions.forEach(param => param.accept(visitor));
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.definitions.forEach(param => param.accept(visitor, [...context, this.type]));
   }
 }
 
-class ThisExpressionNode implements ASTNode {
-  type: string;
-  loc: any;
-  constructor(loc: any) {
+export class ThisExpressionNode implements ASTNode {
+  type: NodeType;
+  loc: Location;
+  constructor(loc: Location) {
     this.type = "ThisExpression";
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class UnaryExpressionNode implements ASTNode {
-  type: string;
+export class UnaryExpressionNode implements ASTNode {
+  type: NodeType;
   operator: string;
   prefix: boolean;
   argument: ASTNode;
-  loc: any;
-  constructor(operator: string, prefix: boolean, argument: ASTNode, loc: any) {
+  loc: Location;
+  constructor(operator: string, prefix: boolean, argument: ASTNode, loc: Location) {
     this.type = "UnaryExpression";
     this.operator = operator;
     this.prefix = prefix;
     this.argument = argument;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.argument.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.argument.accept(visitor, [...context, this.type]);
   }
 }
 
-class BinaryExpressionNode implements ASTNode {
-  type: string;
+export class BinaryExpressionNode implements ASTNode {
+  type: NodeType;
   operator: string;
   left: ASTNode;
   right: ASTNode;
-  loc: any;
-  constructor(operator: string, left: ASTNode, right: ASTNode, loc: any) {
+  loc: Location;
+  constructor(operator: string, left: ASTNode, right: ASTNode, loc: Location) {
     this.type = "BinaryExpression";
     this.operator = operator;
     this.left = left;
     this.right = right;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.left.accept(visitor);
-    this.right.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.left.accept(visitor, [...context, this.type]);
+    this.right.accept(visitor, [...context, this.type]);
   }
 }
 
-class AssignmentExpressionNode implements ASTNode {
-  type: string;
+export class AssignmentExpressionNode implements ASTNode {
+  type: NodeType;
   operator: string;
   left: ASTNode;
   right: ASTNode;
-  loc: any;
-  constructor(operator: string, left: ASTNode, right: ASTNode, loc: any) {
+  loc: Location;
+  constructor(operator: string, left: ASTNode, right: ASTNode, loc: Location) {
     this.type = "AssignmentExpression";
     this.operator = operator;
     this.left = left;
     this.right = right;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.left.accept(visitor);
-    this.right.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.left.accept(visitor, [...context, this.type]);
+    this.right.accept(visitor, [...context, this.type]);
   }
 }
 
-class UpdateExpressionNode implements ASTNode {
-  type: string;
+export class UpdateExpressionNode implements ASTNode {
+  type: NodeType;
   operator: string;
   argument: ASTNode;
   prefix: boolean;
-  loc: any;
-  constructor(operator: string, argument: ASTNode, prefix: boolean, loc: any) {
+  loc: Location;
+  constructor(operator: string, argument: ASTNode, prefix: boolean, loc: Location) {
     this.type = "UpdateExpression";
     this.operator = operator;
     this.argument = argument;
     this.prefix = prefix;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.argument.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.argument.accept(visitor, [...context, this.type]);
   }
 }
 
-class ConditionalExpressionNode implements ASTNode {
-  type: string;
+export class ConditionalExpressionNode implements ASTNode {
+  type: NodeType;
   test: ASTNode;
   consequent: ASTNode;
   alternate: ASTNode;
-  loc: any;
-  constructor(test: ASTNode, consequent: ASTNode, alternate: ASTNode, loc: any) {
+  loc: Location;
+  constructor(test: ASTNode, consequent: ASTNode, alternate: ASTNode, loc: Location) {
     this.type = "ConditionalExpression";
     this.test = test;
     this.consequent = consequent;
     this.alternate = alternate;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.test.accept(visitor);
-    this.consequent.accept(visitor);
-    this.alternate.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.test.accept(visitor, [...context, this.type]);
+    this.consequent.accept(visitor, [...context, this.type]);
+    this.alternate.accept(visitor, [...context, this.type]);
   }
 }
 
-class NewExpressionNode implements ASTNode {
-  type: string;
+export class NewExpressionNode implements ASTNode {
+  type: NodeType;
   constr: ASTNode;
-  loc: any;
-  constructor(constr: ASTNode, loc: any) {
+  loc: Location;
+  constructor(constr: ASTNode, loc: Location) {
     this.type = "NewExpression";
     this.constr = constr;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.constr.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.constr.accept(visitor, [...context, this.type]);
   }
 }
 
-class CallExpressionNode implements ASTNode {
-  type: string;
-  callee: string;
+export class CallExpressionNode implements ASTNode {
+  type: NodeType;
+  callee: ASTNode;
   arguments: ASTNode;
-  loc: any;
-  constructor(callee: string, args: ASTNode, loc: any) {
+  loc: Location;
+  constructor(callee: ASTNode, args: ASTNode, loc: Location) {
     this.type = "CallExpression";
     this.callee = callee;
     this.arguments = args;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.arguments.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.callee.accept(visitor, [...context, this.type]);
+    this.arguments.accept(visitor, [...context, this.type]);
   }
 }
 
-class MemberExpressionNode implements ASTNode {
-  type: string;
+export class MemberExpressionNode implements ASTNode {
+  type: NodeType;
   object: ASTNode;
   property: ASTNode;
   computed: boolean;
-  loc: any;
-  constructor(object: ASTNode, property: ASTNode, computed: boolean, loc: any) {
+  loc: Location;
+  constructor(object: ASTNode, property: ASTNode, computed: boolean, loc: Location) {
     this.type = "MemberExpression";
     this.object = object;
     this.property = property;
     this.computed = computed;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.object.accept(visitor);
-    this.property.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.object.accept(visitor, [...context, this.type]);
+    this.property.accept(visitor, [...context, this.type]);
   }
 }
 
-class SwitchCaseNode implements ASTNode {
-  type: string;
+export class SwitchCaseNode implements ASTNode {
+  type: NodeType;
   test: ASTNode;
   consequent: ASTNode;
-  loc: any;
-  constructor(test: ASTNode, consequent: ASTNode, loc: any) {
+  loc: Location;
+  constructor(test: ASTNode, consequent: ASTNode, loc: Location) {
     this.type = "SwitchCase";
     this.test = test;
     this.consequent = consequent;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.test.accept(visitor);
-    this.consequent.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.test.accept(visitor, [...context, this.type]);
+    this.consequent.accept(visitor, [...context, this.type]);
   }
 }
 
-class CatchClauseNode implements ASTNode {
-  type: string;
+export class CatchClauseNode implements ASTNode {
+  type: NodeType;
   param: ASTNode;
   body: ASTNode;
-  loc: any;
-  constructor(param: ASTNode, body: ASTNode, loc: any) {
+  loc: Location;
+  constructor(param: ASTNode, body: ASTNode, loc: Location) {
     this.type = "CatchClause";
     this.param = param;
     this.body = body;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
-    this.param.accept(visitor);
-    this.body.accept(visitor);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
+    this.param.accept(visitor, [...context, this.type]);
+    this.body.accept(visitor, [...context, this.type]);
   }
 }
 
-class IdentifierNode implements ASTNode {
-  type: string;
+export class IdentifierNode implements ASTNode {
+  type: NodeType;
   name: string;
-  loc: any;
-  constructor(name: string, loc: any) {
+  loc: Location;
+  constructor(name: string, loc: Location) {
     this.type = "Identifier";
     this.name = name;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
 
-class LiteralNode implements ASTNode {
-  type: string;
+export class LiteralNode implements ASTNode {
+  type: NodeType;
   value: any;
-  loc: any;
-  constructor(value: any, loc: any) {
+  loc: Location;
+  constructor(value: any, loc: Location) {
     this.type = "Literal";
     this.value = value;
     this.loc = loc;
   }
-  accept(visitor: Visitor): void {
-    visitor.visit(this);
+  accept(visitor: Visitor, context: NodeType[]): void {
+    visitor.visit(this, context);
   }
 }
-
-module.exports = {
-  ProgramNode,
-  EmptyStatementNode,
-  CompoundStatementNode,
-  ExpressionNode,
-  EmptyExpression,
-  FunctionDeclarationNode,
-  IfStatementNode,
-  BreakStatementNode,
-  ContinueStatementNode,
-  WithStatementNode,
-  SwitchStatementNode,
-  ReturnStatementNode,
-  ThrowStatementNode,
-  TryStatementNode,
-  WhileStatementNode,
-  DoWhileStatementNode,
-  ForStatementNode,
-  ForInStatementNode,
-  DebugggerStatementNode,
-  VariableDefinitionNode,
-  VariableDefinitionListNode,
-  FunctionArgumentListNode,
-  ThisExpressionNode,
-  UnaryExpressionNode,
-  BinaryExpressionNode,
-  AssignmentExpressionNode,
-  UpdateExpressionNode,
-  ConditionalExpressionNode,
-  NewExpressionNode,
-  CallExpressionNode,
-  FormalParameterNode,
-  FormalParameterListNode,
-  MemberExpressionNode,
-  SwitchCaseNode,
-  CatchClauseNode,
-  IdentifierNode,
-  LiteralNode,
-};

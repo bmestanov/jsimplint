@@ -7,11 +7,13 @@
     {
       "type": "node",
       "request": "launch",
-      "name": "Current file",
+      "name": "TSNode",
       "program": "${workspaceFolder}/node_modules/.bin/ts-node",
       "args": [
-          "${workspaceFolder}/src/jsimplint.ts",
+          "${workspaceFolder}/src/index.ts",
+          "${workspaceFolder}/test/1.js"
       ],
+      "console": "integratedTerminal",
       "protocol": "inspector"
     },
     {

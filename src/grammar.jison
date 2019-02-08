@@ -25,12 +25,14 @@ CharacterEscapeSequence {SingleEscapeCharacter}|{NonEscapeCharacter}
 EscapeSequence {CharacterEscapeSequence}|{OctalEscapeSequence}|{HexEscapeSequence}
 DoubleStringCharacter ([^\"\\\n\r]+)|(\\{EscapeSequence})|{LineContinuation}
 SingleStringCharacter ([^\'\\\n\r]+)|(\\{EscapeSequence})|{LineContinuation}
-StringLiteral (\"{DoubleStringCharacter}*\")|(\'{SingleStringCharacter}*\")
+StringLiteral (\"{DoubleStringCharacter}*\")|(\'{SingleStringCharacter}*\')
 
 %options flex
 
 %%
 \s+ ;
+"/*"(.|\r|\n)*?"*/" ;
+"//".*($|\r\n|\r|\n) ;
 ">>>=" return ">>>=";
 ">>=" return ">>=";
 "<<=" return "<<=";

@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc --project . && node src/build.js && cp src/jison.js build/",
-    "start": "node ./build/jsimplint.js"
+    "start": "node ./build/index.js"
   },
   "dependencies": {
     "@types/chai": "^4.1.7",
