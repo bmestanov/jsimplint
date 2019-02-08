@@ -1,4 +1,4 @@
-import { TokenType, MatchMap } from "../types/jsimplint";
+import { TokenType, MatchMap, Token } from '../types/jsimplint';
 
 export const keywords: MatchMap = {
   'do': TokenType.KEYWORD_DO,
@@ -51,3 +51,5 @@ export const keywords: MatchMap = {
   'implements': TokenType.KEYWORD_IMPLEMENTS,
   'instanceof': TokenType.KEYWORD_INSTANCEOF,
 };
+
+export const isKeyword = (token: Token): boolean => !!keywords[token.value];

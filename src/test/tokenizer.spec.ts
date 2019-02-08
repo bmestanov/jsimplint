@@ -32,6 +32,20 @@ describe('Tokenizer tests', () => {
     expect(tokens).to.have.deep.members(expected);
   });
 
+  it('should tokenize float declaration', () => {
+    const tokens = tokenize(`
+    const foo = 42.042;
+    `);
+    const expected: Token[] = [
+      { type: TokenType.KEYWORD_CONST, value: 'const' },
+      { type: TokenType.IDENTIFIER, value: 'foo' },
+      { type: TokenType.PUNCTUATOR_ASSIGN, value: '=' },
+      { type: TokenType.NUMERIC, value: 42.042 },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+    ];
+    expect(tokens).to.have.deep.members(expected);
+  });
+
   it('should tokenize double quote string declaration', () => {
     const tokens = tokenize(`
     const foo = "bar";
@@ -155,6 +169,19 @@ describe('Tokenizer tests', () => {
       { type: TokenType.PUNCTUATOR_RIGHT_PAREN, value: ')' },
       { type: TokenType.PUNCTUATOR_LEFT_CURLY, value: '{' },
       { type: TokenType.PUNCTUATOR_RIGHT_CURLY, value: '}' },
+      { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
+    ];
+    expect(tokens).to.have.deep.members(expected);
+  });
+
+  it('should tokenize property access', () => {
+    const tokens = tokenize(`
+    foo.bar;
+    `);
+    const expected: Token[] = [
+      { type: TokenType.IDENTIFIER, value: 'foo' },
+      { type: TokenType.PUNCTUATOR_DOT, value: '.' },
+      { type: TokenType.IDENTIFIER, value: 'bar' },
       { type: TokenType.PUNCTUATOR_SEMICOLON, value: ';' },
     ];
     expect(tokens).to.have.deep.members(expected);

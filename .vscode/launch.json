@@ -7,6 +7,15 @@
     {
       "type": "node",
       "request": "launch",
+      "name": "Current file",
+      "args": [
+          "${workspaceFolder}/src/parser/jison-import.js",
+      ],
+      "protocol": "inspector"
+    },
+    {
+      "type": "node",
+      "request": "launch",
       "name": "Mocha All",
       "program": "${workspaceFolder}/node_modules/mocha/bin/_mocha",
       "args": [
@@ -15,7 +24,7 @@
           "--timeout",
           "999999",
           "--colors",
-          "${workspaceFolder}/src/test/*.spec.ts",
+          "${workspaceFolder}/src/test/parser.spec.ts",
       ],
       "protocol": "inspector"
     }

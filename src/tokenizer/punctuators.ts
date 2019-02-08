@@ -1,4 +1,4 @@
-import { TokenType, MatchMap } from '../types/jsimplint';
+import { TokenType, MatchMap, Token } from '../types/jsimplint';
 
 export const punctuators: MatchMap = {
   '>>>=': TokenType.PUNCTUATOR_ASSIGN_URSH,
@@ -50,3 +50,5 @@ export const punctuators: MatchMap = {
   '(': TokenType.PUNCTUATOR_LEFT_PAREN,
   ')': TokenType.PUNCTUATOR_RIGHT_PAREN,
 };
+
+export const isPunctuator = (token: Token): boolean => !!punctuators[token.value];

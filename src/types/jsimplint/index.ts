@@ -114,11 +114,3 @@ export interface Token {
 export interface MatchMap {
   [match: string]: TokenType;
 };
-
-export interface Expression {
-
-};
-
-export interface Visitor<Expression> {
-
-};
