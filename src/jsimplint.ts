@@ -6,6 +6,11 @@ export interface RuleError {
   message: string;
 };
 
+export interface LintResult {
+  ast?: ASTNode;
+  errors: RuleError[];
+}
+
 export interface ParseIndex {
   declaredVars: { [name: string]: VariableDefinitionNode };
   declaredFunctions: { [name: string]: FunctionDeclarationNode };
@@ -64,14 +69,14 @@ export class JSimplint {
     return errors;
   }
 
-  analyze(source: string) {
+  analyze(source: string): LintResult {
     try {
       const root = parser.parse(source);
       const pr = this.buildParseIndex(root);
       const errors = this.checkRules(root, pr);
-      return errors;
+      return { ast: root, errors };
     } catch (err) {
-      return [{ message: err.toString() }];
+      return { errors: [{ message: err.toString() }] };
     }
   }
 

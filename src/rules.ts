@@ -22,8 +22,9 @@ export const unusedIdentifier: Rule = {
     const declaredFns = Object.keys(parseIndex.declaredFunctions);
     const identifiers = Object.keys(parseIndex.identifiers);
     const unusedVars =
-      _(declaredVars)
+    _(declaredVars)
         .difference(identifiers)
+        .difference(declaredFns)
         .map(v => ({ message: `Unused var: '${v}' at (${node.loc.first_line}:${node.loc.first_column}).` }))
         .value();
     const unusedFns =
